@@ -1,4 +1,5 @@
-/**
+/** -*- coding: utf-8-unix -*- Юникод/UTF-8
+ *
  * Implements an example of Heap sort.
  *
  * In English, here's how the algorithm works:
@@ -6,17 +7,20 @@
  * remaining value on heap) until you've popped all values off the heap. The values
  * leave the heap in reverse sorted order, so as the heap shrinks, we can put popped
  * values to the right end of the same array.
- **/
-
+ */
 object HeapSort {
   def main(args: Array[String]): Unit = {
-    var mess = Array(3, 9, 8, 13, 2, 5, 4);
+    val mess = Array(3, 9, 8, 13, 2, 5, 4);
 
-    sort(mess)
+    val hs : HeapSort[Int] = new HeapSort();
+    hs.sort(mess)
    // buildHeap(mess, mess.length-1)
 
     mess.foreach( println )
   }
+}
+
+class HeapSort[T] {
 
   def sort(a: Array[Int]): Unit = {
     var m = a.length - 1 
@@ -28,7 +32,7 @@ object HeapSort {
     }
   }
 
-  def buildHeap(a: Array[Int], m: Int): Unit = {
+  private def buildHeap(a: Array[Int], m: Int): Unit = {
     for (i <- m/2 to 0 by -1) {
       heapify(a, i, m)
     }
@@ -36,7 +40,7 @@ object HeapSort {
 
   /**Pushes an illegally located element down the heap to restore heap property.*/
   @annotation.tailrec
-  def heapify(a: Array[Int], loc: Int, lastLeaf: Int): Unit = {
+  private def heapify(a: Array[Int], loc: Int, lastLeaf: Int): Unit = {
     val l = left(loc) 
     val r = right(loc)
 
@@ -52,16 +56,16 @@ object HeapSort {
   }
 
   /**Returns position of left child (possibly empty). */
-  def left(loc: Int): Int = {
+  private def left(loc: Int): Int = {
     return 2*loc
   }
 
   /**Returns position of right child (possibly empty). */
-  def right(loc: Int): Int = {
+  private def right(loc: Int): Int = {
     return 2*loc+1
   }
 
-  def swap(a: Array[Int], i: Int, j:Int): Unit = {
+  private def swap(a: Array[Int], i: Int, j:Int): Unit = {
     val staging = a(i)
     a(i) = a(j)
     a(j) = staging
