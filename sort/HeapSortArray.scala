@@ -11,10 +11,10 @@
 
 import scala.util.Random
 
-object HeapSort {
+object HeapSortArray {
   def main(args: Array[String]): Unit = {
 
-    val hs1 : HeapSort[Int] = new HeapSort();
+    val hs1 : HeapSortArray[Int] = new HeapSortArray();
     val mess0 : Array[Int] = Array.fill(10)(Math.abs(Random.nextInt));
     hs1.sort(mess0)
     mess0.foreach( println )
@@ -25,7 +25,7 @@ object HeapSort {
     mess1.foreach( println )
     println
 
-    val hs2 : HeapSort[String] = new HeapSort();
+    val hs2 : HeapSortArray[String] = new HeapSortArray();
     val mess2 = Array("3", "x9", "y8", "и13", "ü2", "ö5", "ярпыж4");
     hs2.sort(mess2)
     mess2.foreach( println )
@@ -33,7 +33,22 @@ object HeapSort {
   }
 }
 
-class HeapSort[T : Ordering] {
+class HeapSortArray[T : Ordering] {
+ 
+  private def parentIdx(idx : Int) : Int = { (idx - 1) / 2 }
+
+  private def leftChildIdx(idx : Int) : Int = { 2*idx + 1 }
+  
+  private def rightChildIdx(idx : Int) : Int = { 2*idx + 2 }
+
+  private def siftDown(arr : Array[T], startIdx : Int)(implicit ordering : Ordering[T]) : Array[T] = {
+    var rootIdx = startIdx
+    var leftChild = leftChildIdx(rootIdx)
+    var rightChild = rightChildIdx(rootIdx)
+    while (leftChild < arr.length) {
+      if (
+  }
+    
 
   def sort(a: Array[T])(implicit ordering : Ordering[T]): Unit = {
     var m = a.length - 1 
