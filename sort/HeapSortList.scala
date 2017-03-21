@@ -9,25 +9,25 @@
  * values to the right end of the same array.
  */
 
-import scala.collection.immutable.List
+import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
 object HeapSortList {
   def main(args: Array[String]): Unit = {
 
     val hs1 : HeapSortList[Int] = new HeapSortList();
-    val mess0 : Array[Int] = Array.fill(10)(Math.abs(Random.nextInt));
+    val mess0 : ArrayBuffer[Int] = ArrayBuffer.fill(10)(Math.abs(Random.nextInt));
     hs1.sort(mess0)
     mess0.foreach( println )
     println
 
-    val mess1 = Array(3, 9, 8, 13, 2, 5, 4);
+    val mess1 : ArrayBuffer[Int] = ArrayBuffer(3, 9, 8, 13, 2, 5, 4);
     hs1.sort(mess1)
     mess1.foreach( println )
     println
 
     val hs2 : HeapSortList[String] = new HeapSortList();
-    val mess2 = Array("3", "x9", "y8", "и13", "ü2", "ö5", "ярпыж4");
+    val mess2 = ArrayBuffer("3", "x9", "y8", "и13", "ü2", "ö5", "ярпыж4");
     hs2.sort(mess2)
     mess2.foreach( println )
     println
@@ -36,7 +36,7 @@ object HeapSortList {
 
 class HeapSortList[T : Ordering] {
 
-  def sort(a: Array[T])(implicit ordering : Ordering[T]): Unit = {
+  def sort(a: ArrayBuffer[T])(implicit ordering : Ordering[T]): Unit = {
     var m = a.length - 1 
     buildHeap(a, m)(ordering)
     while (m >= 1) {
@@ -46,7 +46,7 @@ class HeapSortList[T : Ordering] {
     }
   }
 
-  private def buildHeap(a: Array[T], m: Int)(implicit ordering : Ordering[T]): Unit = {
+  private def buildHeap(a: ArrayBuffer[T], m: Int)(implicit ordering : Ordering[T]): Unit = {
     for (i <- m/2 to 0 by -1) {
       heapify(a, i, m)(ordering)
     }
@@ -54,7 +54,7 @@ class HeapSortList[T : Ordering] {
 
   /**Pushes an illegally located element down the heap to restore heap property.*/
   @annotation.tailrec
-  private def heapify(a: Array[T], loc: Int, lastLeaf: Int)(implicit ordering : Ordering[T]) : Unit = {
+  private def heapify(a: ArrayBuffer[T], loc: Int, lastLeaf: Int)(implicit ordering : Ordering[T]) : Unit = {
     val l = left(loc) 
     val r = right(loc)
 
@@ -79,7 +79,7 @@ class HeapSortList[T : Ordering] {
     return 2*loc+1
   }
 
-  private def swap(a: Array[T], i: Int, j:Int): Unit = {
+  private def swap(a: ArrayBuffer[T], i: Int, j:Int): Unit = {
     val staging = a(i)
     a(i) = a(j)
     a(j) = staging
