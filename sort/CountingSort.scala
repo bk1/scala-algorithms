@@ -7,7 +7,7 @@
  * Count the occurrences of each key, and store this value in the array.
  * Iterate through array, assembling each key in order, repeated once for 
  * each occurrence.
- **/
+ */
 
 object CountingSort {
   def main(args: Array[String]) {

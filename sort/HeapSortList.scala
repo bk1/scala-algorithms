@@ -36,7 +36,7 @@ object HeapSortList {
 
 class HeapSortList[T : Ordering] {
 
-  def sort(a: ArrayBuffer[T])(implicit ordering : Ordering[T]): Unit = {
+  def sort(a: ArrayBuffer[T])(implicit ordering : Ordering[T]): ArrayBuffer[T]  = {
     var m = a.length - 1 
     buildHeap(a, m)(ordering)
     while (m >= 1) {
@@ -44,6 +44,7 @@ class HeapSortList[T : Ordering] {
       m-=1
       heapify(a, 0, m)(ordering)
     }
+    return a;
   }
 
   private def buildHeap(a: ArrayBuffer[T], m: Int)(implicit ordering : Ordering[T]): Unit = {
