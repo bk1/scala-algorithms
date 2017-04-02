@@ -47,10 +47,10 @@ class HeapSortArray[T : Ordering] {
     var rightChild = rightChildIdx(root)
     while (leftChild < arr.length) {
       var other = root
-      if (ordering.compare(arr(other), arr(leftChild) < 0) {
+      if (ordering.compare(arr(other), arr(leftChild)) < 0) {
         other = leftChild
       }
-      if (rightChild < arr.length && ordering.compare(arr(other), arr(rightChild))) < 0) {
+      if (rightChild < arr.length && ordering.compare(arr(other), arr(rightChild)) < 0) {
         other = rightChild
       }
       if (other != root) {
@@ -59,26 +59,27 @@ class HeapSortArray[T : Ordering] {
         leftChild = leftChildIdx(root)
         rightChild = rightChildIdx(root)
       } else {
-        return
+        return arr
       }
     }
+    return arr
   }
 
 
   /**Pushes an illegally located element down the heap to restore heap property.*/
   @annotation.tailrec
   private def heapify(arr: Array[T], loc: Int, lastLeaf: Int)(implicit ordering : Ordering[T]) : Unit = {
-    val l = left(loc) 
-    val r = right(loc)
+    val l = leftChildIdx(loc) 
+    val r = rightChildIdx(loc)
 
     var max = loc
 
-    if (l <= lastLeaf && ordering.compare(a(l), a(max)) > 0) { max = l }
-    if (r <= lastLeaf && ordering.compare(a(r), a(max)) > 0) { max = r }
+    if (l <= lastLeaf && ordering.compare(arr(l), arr(max)) > 0) { max = l }
+    if (r <= lastLeaf && ordering.compare(arr(r), arr(max)) > 0) { max = r }
 
     if (max != loc) {
-      swap(a, max, loc)
-      heapify(a, max, lastLeaf)(ordering)
+      swap(arr, max, loc)
+      heapify(arr, max, lastLeaf)(ordering)
     }
   }
     

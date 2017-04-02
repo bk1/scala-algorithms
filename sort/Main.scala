@@ -20,7 +20,7 @@ object Main {
     // FileWriter
     val file = new File(outputFile)
     val bw   = new BufferedWriter(new FileWriter(file))
-    list.foreach { bw.write(_) }
+    list.foreach((x : String) => { bw.write(x+"\n")})
     bw.close()
   }
 
@@ -31,7 +31,10 @@ object Main {
     val inputFile : String = args(0)
     val outputFile : String = args(1)
     val algorithm : String = args(2)
-    val listOfLines = Source.fromFile(inputFile).getLines.toList
+    val source = Source.fromFile(new File(inputFile), "utf-8")
+    val linesInternal = source.getLines
+    // println("linesInternal=" + linesInternal)
+    val listOfLines = linesInternal.toList
     if (algorithm == "heapsort") {
       val unsorted = listOfLines.to[ArrayBuffer]
       val hs : HeapSortList[String] = new HeapSortList()
