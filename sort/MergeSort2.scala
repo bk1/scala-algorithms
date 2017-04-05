@@ -8,9 +8,9 @@
  * sorted).
  */
 
-object ParallelHeapSort {
+object MergeSort2 {
   def main(args: Array[String]) {
-    val phs : ParallelHeapSort[Int] = new ParallelHeapSort(2)
+    val phs : MergeSort2[Int] = new MergeSort2(2)
     var mess = Array(3, 9, 8, 13, 2, 5, 4);
     mess.foreach( println )
     println
@@ -19,7 +19,7 @@ object ParallelHeapSort {
   }
 }
 
-class ParallelHeapSort[T : Ordering](val nThreads : Int) {
+class MergeSort2[T : Ordering](val nThreads : Int) {
 
   /** Recursively sorts a subarray via Merge Sort algorithm.
    *
