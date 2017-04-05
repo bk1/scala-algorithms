@@ -8,13 +8,18 @@
  * sorted).
  */
 
-object MergeSort {
+object ParallelHeapSort {
   def main(args: Array[String]) {
+    val phs : ParallelHeapSort[Int] = new ParallelHeapSort(2)
     var mess = Array(3, 9, 8, 13, 2, 5, 4);
-
-    val result = sort(mess, 0, mess.length-1)
+    mess.foreach( println )
+    println
+    val result = phs.sort(mess)
     result.foreach( println )
   }
+}
+
+class ParallelHeapSort[T : Ordering](val nThreads : Int) {
 
   /** Recursively sorts a subarray via Merge Sort algorithm.
    *
@@ -23,14 +28,21 @@ object MergeSort {
    * @param hi the index of the right-most edge of desired subarray
    * @return a sorted array containing all elements in the prescribed subarray
    */
-  def sort(a: Array[Int], lo: Int, hi: Int) : Array[Int] = {
+  def sort(a: Array[Int]) : Array[Int] = {
+    sortSegmented(a, 0, a.length-1)
+  }
+
+  def sortSegmented(a: Array[Int], lo: Int, hi: Int) : Array[Int] = {
+    println("sortSegmented lo=" + lo + " hi=" + hi)
     if (hi - lo < 1){
+      println("slicing")
       return a.slice(lo, hi+1)
     }
     val mid = (hi - lo)/2 + lo
-    val left = sort(a, lo, mid)
-    val right = sort(a, mid+1, hi)
+    val left = sortSegmented(a, lo, mid)
+    val right = sortSegmented(a, mid+1, hi)
 
+    println("merging")
     return merge(left, right)
   }
 
@@ -41,6 +53,7 @@ object MergeSort {
    * @return a new sorted array containing all elements from a and b
    *  */
   def merge(a: Array[Int], b: Array[Int]): Array[Int] = {
+    println("merge : " + a.length + " " + b.length)
     var result = Array.fill(a.length + b.length)(0)
 
     var i: Int = 0
@@ -64,6 +77,7 @@ object MergeSort {
         j+=1
       }
     }
+    println("merge : " + a.length + " " + b.length + " -> " + result.length)
     return result
   }
 }

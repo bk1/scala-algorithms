@@ -7,7 +7,7 @@
  * the left of which all values are less than the pivot. At the end, move
  * the pivot value to the divide location. Then recurse for the subarrays
  * on either side of the pivot.
- **/
+ */
 
 object Quicksort {
   def main(args: Array[String]) {

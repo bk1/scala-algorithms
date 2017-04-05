@@ -11,10 +11,10 @@
 
 import scala.util.Random
 
-object HeapSortArray {
+object HeapSortArraySegmented {
   def main(args: Array[String]): Unit = {
 
-    val hs1 : HeapSortArray[Int] = new HeapSortArray();
+    val hs1 : HeapSortArraySegmented[Int] = new HeapSortArraySegmented();
     val mess0 : Array[Int] = Array.fill(10)(Math.abs(Random.nextInt));
     hs1.sort(mess0)
     mess0.foreach( println )
@@ -25,7 +25,7 @@ object HeapSortArray {
     mess1.foreach( println )
     println
 
-    val hs2 : HeapSortArray[String] = new HeapSortArray();
+    val hs2 : HeapSortArraySegmented[String] = new HeapSortArraySegmented();
     val mess2 = Array("3", "x9", "y8", "и13", "ü2", "ö5", "ярпыж4");
     hs2.sort(mess2)
     mess2.foreach( println )
@@ -33,31 +33,31 @@ object HeapSortArray {
   }
 }
 
-class HeapSortArray[T : Ordering] {
+class HeapSortArraySegmented[T : Ordering] {
  
-  private def parentIdx(idx : Int) : Int = { (idx - 1) / 2 }
+  private def parentIdx(idx : Int, base : Int) : Int = { (idx - base - 1) / 2 + base }
 
-  private def leftChildIdx(idx : Int) : Int = { 2*idx + 1 }
+  private def leftChildIdx(idx : Int, base : Int) : Int = { 2*(idx - base) + 1 + base }
   
-  private def rightChildIdx(idx : Int) : Int = { 2*idx + 2 }
+  private def rightChildIdx(idx : Int, base : Int) : Int = { 2*(idx - base) + 2 + base }
 
-  private def siftDown(arr : Array[T], start : Int)(implicit ordering : Ordering[T]) : Array[T] = {
+  private def siftDown(arr : Array[T], start : Int, end : Int, base : Int)(implicit ordering : Ordering[T]) : Array[T] = {
     var root = start
-    var leftChild = leftChildIdx(root)
-    var rightChild = rightChildIdx(root)
-    while (leftChild < arr.length) {
+    var leftChild = leftChildIdx(root, base)
+    var rightChild = rightChildIdx(root, base)
+    while (leftChild < end) {
       var other = root
       if (ordering.compare(arr(other), arr(leftChild)) < 0) {
         other = leftChild
       }
-      if (rightChild < arr.length && ordering.compare(arr(other), arr(rightChild)) < 0) {
+      if (rightChild < end && ordering.compare(arr(other), arr(rightChild)) < 0) {
         other = rightChild
       }
       if (other != root) {
         swap(arr, root, other)
         root = other
-        leftChild = leftChildIdx(root)
-        rightChild = rightChildIdx(root)
+        leftChild = leftChildIdx(root, base)
+        rightChild = rightChildIdx(root, base)
       } else {
         return arr
       }
@@ -68,9 +68,9 @@ class HeapSortArray[T : Ordering] {
 
   /**Pushes an illegally located element down the heap to restore heap property.*/
   @annotation.tailrec
-  private def heapify(arr: Array[T], loc: Int, lastLeaf: Int)(implicit ordering : Ordering[T]) : Unit = {
-    val l = leftChildIdx(loc) 
-    val r = rightChildIdx(loc)
+  private def heapify(arr: Array[T], loc: Int, lastLeaf: Int, base : Int)(implicit ordering : Ordering[T]) : Unit = {
+    val l = leftChildIdx(loc, base) 
+    val r = rightChildIdx(loc, base)
 
     var max = loc
 
@@ -79,36 +79,32 @@ class HeapSortArray[T : Ordering] {
 
     if (max != loc) {
       swap(arr, max, loc)
-      heapify(arr, max, lastLeaf)(ordering)
+      heapify(arr, max, lastLeaf, base)(ordering)
     }
   }
     
 
   def sort(a: Array[T])(implicit ordering : Ordering[T]): Array[T] = {
-    var m = a.length - 1 
-    buildHeap(a, m)(ordering)
-    while (m >= 1) {
-      swap(a, 0, m)
+    sortSegmented(a, 0, a.length)(ordering)
+  }
+
+  def sortSegmented(a : Array[T], lowerIncl : Int, upperExcl : Int)(implicit ordering : Ordering[T]): Array[T] = {
+    var m = upperExcl - 1
+    val base = lowerIncl
+    buildHeap(a, lowerIncl, m, base)(ordering)
+    while (m > lowerIncl) {
+      swap(a, lowerIncl, m)
       m-=1
-      heapify(a, 0, m)(ordering)
+      heapify(a, lowerIncl, m, base)(ordering)
     }
     a
   }
 
-  private def buildHeap(a: Array[T], m: Int)(implicit ordering : Ordering[T]): Unit = {
-    for (i <- m/2 to 0 by -1) {
-      heapify(a, i, m)(ordering)
+  private def buildHeap(a: Array[T], lowerInсl : Int, m: Int, base : Int)(implicit ordering : Ordering[T]): Unit = {
+    val mm = m - base
+    for (i <- mm/2 to 0 by -1) {
+      heapify(a, i + base, m, base)(ordering)
     }
-  }
-
-  /**Returns position of left child (possibly empty). */
-  private def left(loc: Int): Int = {
-    return 2*loc
-  }
-
-  /**Returns position of right child (possibly empty). */
-  private def right(loc: Int): Int = {
-    return 2*loc+1
   }
 
   private def swap(a: Array[T], i: Int, j:Int): Unit = {
