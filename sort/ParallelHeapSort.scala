@@ -1,3 +1,5 @@
+import reflect.ClassTag
+
 /**
  * Implements an example of Merge sort.
  *
@@ -28,11 +30,11 @@ class ParallelHeapSort[T : Ordering](val nThreads : Int) {
    * @param higherExcl the index of the right-most edge of desired subarray
    * @return a sorted array containing all elements in the prescribed subarray
    */
-  def sort(a: Array[Int]) : Array[Int] = {
-    sortSegmented(a, 0, a.length)
+  def sort(a: Array[T])(implicit ordering : Ordering[T], classTag : ClassTag[T]) : Array[T] = {
+    sortSegmented(a, 0, a.length)(ordering, classTag)
   }
 
-  def sortSegmented(a: Array[Int], lowerIncl: Int, higherExcl: Int) : Array[Int] = {
+  def sortSegmented(a: Array[T], lowerIncl: Int, higherExcl: Int)(implicit ordering : Ordering[T], classTag : ClassTag[T]) : Array[T] = {
     println("sortSegmented lowerIncl=" + lowerIncl + " higherExcl=" + higherExcl)
     if (higherExcl - lowerIncl <= 1){
       println("slicing")
@@ -40,11 +42,11 @@ class ParallelHeapSort[T : Ordering](val nThreads : Int) {
     }
     val mid = (higherExcl - lowerIncl)/2 + lowerIncl
     println("sortSegmented lowerIncl=" + lowerIncl + " higherExcl=" + higherExcl + " mid=" + mid)
-    val left = sortSegmented(a, lowerIncl, mid)
-    val right = sortSegmented(a, mid, higherExcl)
+    val left = sortSegmented(a, lowerIncl, mid)(ordering, classTag)
+    val right = sortSegmented(a, mid, higherExcl)(ordering, classTag)
 
     println("merging")
-    return merge(left, right)
+    return merge(left, 0, left.length, right, 0, right.length)(ordering, classTag)
   }
 
   /** Combines two sorted arrays into a single sorted array. 
@@ -53,10 +55,11 @@ class ParallelHeapSort[T : Ordering](val nThreads : Int) {
    * @param b second sorted array
    * @return a new sorted array containing all elements from a and b
    *  */
-  def merge(a: Array[Int], b: Array[Int]): Array[Int] = {
+  def merge(a: Array[T], loA : Int, hiA : Int, b: Array[T], loB : Int, hiB : Int)(implicit ordering : Ordering[T], classTag : ClassTag[T]): Array[T] = {
     println("merge : " + a.length + " " + b.length)
-    var result = Array.fill(a.length + b.length)(0)
-
+    var result = Array.fill(hiA - loA + hiB - loB)(a(0))
+    val imax = hiA - loA
+    val jmax = hiB - loB
     var i: Int = 0
     var j: Int = 0
 
@@ -64,16 +67,14 @@ class ParallelHeapSort[T : Ordering](val nThreads : Int) {
      *  which would probably be more idiomatic of 
      *  functional programming.
      */
-    while (i < a.length || j < b.length){
-      if (i >= a.length){
+    while (i < imax || j < jmax){
+      if (i >= imax) {
         result(i+j) = b(j)
         j+=1
-      }
-      else if (j >= b.length || a(i) <= b(j)) {
+      } else if (j >= jmax || ordering.compare(a(i), b(j)) <= 0) {
         result(i+j) = a(i)
         i+=1
-      }
-      else {
+      } else {
         result(i+j) = b(j)
         j+=1
       }
